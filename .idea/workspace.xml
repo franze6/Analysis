@@ -2,15 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="51263e86-daff-41ab-b2cb-f205e0d429d8" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StatPid.iml" beforeDir="false" afterPath="$PROJECT_DIR$/StatPid.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/Analyser.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/Analyser.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Analyser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Analyser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/StatPid.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/StatPid.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -99,6 +93,14 @@
       <option name="presentableId" value="Default" />
       <updated>1573032680108</updated>
     </task>
+    <task id="LOCAL-00001" summary="command line added">
+      <created>1573315616481</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1573315616481</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -113,6 +115,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="command line added" />
+    <option name="LAST_COMMIT_MESSAGE" value="command line added" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

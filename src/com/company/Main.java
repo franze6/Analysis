@@ -97,7 +97,15 @@ public class Main {
                         Desktop.getDesktop().open(file.getAbsoluteFile());
                         file.deleteOnExit();
                     }
-                } else if (command.equals("exit")) System.exit(0);
+                }
+                else if (command.equals("exit")) System.exit(0);
+                else if (command.equals("help")) {
+                    System.out.println("\tgetpids - получает пиды процессов\n" +
+                            "\tkill <pid> - Убивает процесс <pid>\n" +
+                            "\tstart <inerations> - Начинает процесс анализа с <interations> измерений\n" +
+                            "\tget <pid> - Получает график по <pid>(Вызывать после start)\n" +
+                            "\texit - Выход\n");
+                }
             }
         } catch (InterruptedException | IOException | JSONException e) {
             e.printStackTrace();
