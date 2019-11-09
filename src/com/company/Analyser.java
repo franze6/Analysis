@@ -25,36 +25,48 @@ public class Analyser {
     private static final String S_SERVER="bcvm496";
     private static final String S_BS="TSC Dev Nightmare";
 
-    private static final int P_COUNT = 100; // Время анализа: P_COUNT*0,1
+    private static String P_COUNT = "100"; // Время анализа: P_COUNT*0,1
+    public boolean wait = false;
 
     private JSONObject jobj = new JSONObject();
+    private ArrayList<String> pids = null;
 
-    public void start() {
+    public JSONObject getJobj() {
+        return jobj;
+    }
+
+    public void start(String iterations) {
+
+        this.wait = true;
+        if(!iterations.isEmpty())
+            P_COUNT = iterations;
+        if(this.pids == null)
+            this.pids = findPidsForComp();
+        for(String str: this.pids) this.jobj.put(str, new JSONObject());
+        try {
+            startAnalyse();
+        }
+        catch (Exception e){
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void killSission(String pid) {
         SSHManager instance = new SSHManager(SSH_USER_NAME, SSH_PASSWORD, SSH_IP, "");
         String errorMessage = instance.connect();
-
         if(errorMessage != null)
         {
             System.err.println(errorMessage);
             return;
         }
-
-        ArrayList<String> res = findPidsForComp(S_OBJMGR, instance);
-        for(String str: res) this.jobj.put(str, new JSONObject());
-        try {
-            startAnalyse(res, false);
-        }
-        catch (Exception e){
-            System.err.println(e.getMessage());
-        }
-
+        ArrayList<String> res = new ArrayList<>();
+        String command = "kill "+pid+"\nexit\n";
+        instance.sendCommand(command);
         instance.close();
-
     }
+    private void startAnalyse() {
 
-    private void startAnalyse(ArrayList<String> res, boolean withBS) throws InterruptedException {
-
-        for(String str: res) {
+        for(String str: this.pids) {
             Thread t = new Thread(() -> {
                 SSHManager instance = new SSHManager(SSH_USER_NAME, SSH_PASSWORD, SSH_IP, "");
                 String errorMessage = instance.connect();
@@ -77,35 +89,20 @@ public class Analyser {
                     memory.put(s.memory);
 
                 }
+                this.jobj.getJSONObject(str).put("cpu_before", cpu);
+                this.jobj.getJSONObject(str).put("memory_before", memory);
+                this.wait = false;
 
-                if(withBS) {
-                    this.jobj.getJSONObject(str).put("cpu_after", cpu);
-                    this.jobj.getJSONObject(str).put("memory_after", memory);
-                }
-                else {
-                    this.jobj.getJSONObject(str).put("cpu_before", cpu);
-                    this.jobj.getJSONObject(str).put("memory_before", memory);
-                }
                 instance.close();
-                if(withBS) {
-                    System.out.println(this.jobj.getJSONObject(str).toString());
-                    return;
-                }
-                try {
-                    startAnalyse(res, true);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             });
             t.start();
-            if(!withBS) return;
 
 
             Thread thread = new Thread(() -> {
                 try {
                     SiebelDataBean sblConnect = new SiebelDataBean();
                     sblConnect.login("Siebel://"+S_IP+":"+S_PORT+"/"+S_ENTERPRISE+"/"+S_OBJMGR, S_USER_NAME, S_PASSWORD, S_LOCALE);
-
+                    Thread.sleep(2000);
                     SiebelService BS = sblConnect.getService(S_BS);
                     SiebelPropertySet Inputs1 = sblConnect.newPropertySet();
                     Inputs1.setProperty("iterations", "1000");
@@ -117,7 +114,9 @@ public class Analyser {
                     sblConnect.logoff();
 
                 }
-                catch (SiebelException e){}
+                catch (SiebelException | InterruptedException e){
+                    System.err.println(e.getMessage());
+                }
             });
             thread.start();
 
@@ -125,15 +124,24 @@ public class Analyser {
         }
     }
 
-    private ArrayList<String> findPidsForComp(String comp, SSHManager instance) {
+    public ArrayList<String> findPidsForComp() {
+        SSHManager instance = new SSHManager(SSH_USER_NAME, SSH_PASSWORD, SSH_IP, "");
+        String errorMessage = instance.connect();
+        if(errorMessage != null)
+        {
+            System.err.println(errorMessage);
+            return null;
+        }
         ArrayList<String> res = new ArrayList<>();
-        String command = ". /u01/app/Siebel/siebsrvr/siebenv.sh\nsrvrmgr /g "+S_IP+" /e "+S_ENTERPRISE+" /u "+S_USER_NAME+" /p "+S_PASSWORD+" /s "+S_SERVER+" /c 'list procs for comp "+comp+" show CC_ALIAS, TK_PID' | grep "+S_OBJMGR+" | awk '{print $2}'\nexit\n";
+        String command = ". /u01/app/Siebel/siebsrvr/siebenv.sh\nsrvrmgr /g "+S_IP+" /e "+S_ENTERPRISE+" /u "+S_USER_NAME+" /p "+S_PASSWORD+" /s "+S_SERVER+" /c 'list procs for comp "+S_OBJMGR+" show CC_ALIAS, TK_PID' | grep "+S_OBJMGR+" | awk '{print $2}'\nexit\n";
 
 
         String result = instance.sendCommand(command);
+        instance.close();
+
         for(String str: result.replaceAll("\r+","").split("\n"))
             if(isInteger(str))  res.add(str);
-
+        this.pids = res;
         return res;
     }
 

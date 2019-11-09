@@ -16,9 +16,9 @@ public class StatPid {
     //delay - Задержка между каждой следующей выборкой
 
 
-    public ArrayList<State> start(float delay, int count, SSHManager instance) {
-        ArrayList<State> result = new ArrayList<State>();
-        String cmd = "top -p " + this.pid + " -d "+delay+" -b -n "+count+" | grep " + this.pid + " |  sed -r -e \"s;\\s\\s*; ;g\" -e \"s;^ *;;\"  |cut -d ' '  -f '6 9' | tr ' ' -\nexit\n";
+    public ArrayList<State> start(float delay, String iterations, SSHManager instance) {
+        ArrayList<State> result = new ArrayList<>();
+        String cmd = "top -p " + this.pid + " -d "+delay+" -b -n "+iterations+" | grep " + this.pid + " |  sed -r -e \"s;\\s\\s*; ;g\" -e \"s;^ *;;\"  |cut -d ' '  -f '6 9' | tr ' ' -\nexit\n";
 
 
 
