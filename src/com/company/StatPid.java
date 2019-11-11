@@ -4,8 +4,6 @@ import java.util.*;
 
 public class StatPid {
 
-
-
     public String pid = "";
 
     public StatPid(String pid) {
@@ -15,17 +13,11 @@ public class StatPid {
     //count - Кол-во выборок состояния процесса
     //delay - Задержка между каждой следующей выборкой
 
-
     public ArrayList<State> start(float delay, String iterations, SSHManager instance) {
         ArrayList<State> result = new ArrayList<>();
         String cmd = "top -p " + this.pid + " -d "+delay+" -b -n "+iterations+" | grep " + this.pid + " |  sed -r -e \"s;\\s\\s*; ;g\" -e \"s;^ *;;\"  |cut -d ' '  -f '6 9' | tr ' ' -\nexit\n";
 
-
-
         String res = instance.sendCommand(cmd);
-
-        //System.out.println(res);
-
 
         String[] arr = res.replaceAll("\r+","").split("\n");
         for(int i = 4; i < arr.length-2; i++)

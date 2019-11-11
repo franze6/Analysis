@@ -7,19 +7,21 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        Analyser analyser = new Analyser();
+
+        States st  = new States();
+
+        Analyser analyser = new Analyser(st);
         Scanner in = new Scanner(System.in);
         try {
 
 
             while (true) {
-                if (analyser.wait) {
+                if (!st.isBsFinished()) {
                     Thread.sleep(1000);
                     continue;
                 }
@@ -29,9 +31,18 @@ public class Main {
                 if (command.equals("getpids")) {
                     for (String str : analyser.findPidsForComp())
                         System.out.println(str);
-                } else if (command.contains("start")) {
-                    String[] arg = command.split(" ");
-                    analyser.start(arg[1]);
+                } else if (command.equals("startBS")) {
+                    analyser.startBS();
+                }else if (command.contains("start")) {
+                    if(st.isAnalyseFinished()) {
+                        String[] arg = command.split(" ");
+                        if(arg.length > 1)
+                            analyser.start(arg[1]);
+                        else System.out.println("Не верный синтаксис");
+                    }
+                    else {
+                        System.out.println("Старый процесс еще не завершен, подожди немного");
+                    }
                 } else if (command.contains("kill")) {
                     String[] arg = command.split(" ");
                     analyser.killSission(arg[1]);
@@ -100,12 +111,17 @@ public class Main {
                 }
                 else if (command.equals("exit")) System.exit(0);
                 else if (command.equals("help")) {
-                    System.out.println("\tgetpids - получает пиды процессов\n" +
+                    System.out.println(
+                            "\tgetpids - получает пиды процессов\n" +
                             "\tkill <pid> - Убивает процесс <pid>\n" +
                             "\tstart <inerations> - Начинает процесс анализа с <interations> измерений\n" +
                             "\tget <pid> - Получает график по <pid>(Вызывать после start)\n" +
-                            "\texit - Выход\n");
+                            "\texit - Выход\n" +
+                            "\tstartBS - запуск бизнес-сервиса\n"
+
+                    );
                 }
+                Thread.sleep(100);
             }
         } catch (InterruptedException | IOException | JSONException e) {
             e.printStackTrace();

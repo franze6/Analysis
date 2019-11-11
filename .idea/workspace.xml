@@ -2,9 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="51263e86-daff-41ab-b2cb-f205e0d429d8" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/com/company/SiebelBSExec.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/company/States.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/artifacts/StatPid_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/artifacts/StatPid_jar.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StatPid.iml" beforeDir="false" afterPath="$PROJECT_DIR$/StatPid.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/Analyser.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/Analyser.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/StatPid$State.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/StatPid$State.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/StatPid.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/StatPid.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/company/Analyser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Analyser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/company/StatPid.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/StatPid.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -100,7 +109,14 @@
       <option name="project" value="LOCAL" />
       <updated>1573315616481</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="help added">
+      <created>1573316075842</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1573316075842</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -118,20 +134,16 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="command line added" />
-    <option name="LAST_COMMIT_MESSAGE" value="command line added" />
+    <MESSAGE value="help added" />
+    <option name="LAST_COMMIT_MESSAGE" value="help added" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/com/company/StatPid.java</url>
-          <line>29</line>
+          <line>21</line>
           <option name="timeStamp" value="12" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/com/company/Main.java</url>
-          <line>33</line>
-          <option name="timeStamp" value="16" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

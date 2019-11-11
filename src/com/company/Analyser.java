@@ -8,7 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Analyser {
     private static final String SSH_USER_NAME="siebel";
@@ -31,13 +32,19 @@ public class Analyser {
     private JSONObject jobj = new JSONObject();
     private ArrayList<String> pids = null;
 
+    private States st = null;
+
+    public Analyser(States st) {
+        this.st = st;
+    }
+
     public JSONObject getJobj() {
         return jobj;
     }
 
     public void start(String iterations) {
 
-        this.wait = true;
+        this.st.setAnalyseFinished(false);
         if(!iterations.isEmpty())
             P_COUNT = iterations;
         if(this.pids == null)
@@ -91,14 +98,15 @@ public class Analyser {
                 }
                 this.jobj.getJSONObject(str).put("cpu_before", cpu);
                 this.jobj.getJSONObject(str).put("memory_before", memory);
-                this.wait = false;
+                this.st.setAnalyseFinished(true);
+                System.out.print("\n Процесс завершен\n>");
 
                 instance.close();
             });
             t.start();
 
 
-            Thread thread = new Thread(() -> {
+            /*Thread thread = new Thread(() -> {
                 try {
                     SiebelDataBean sblConnect = new SiebelDataBean();
                     sblConnect.login("Siebel://"+S_IP+":"+S_PORT+"/"+S_ENTERPRISE+"/"+S_OBJMGR, S_USER_NAME, S_PASSWORD, S_LOCALE);
@@ -119,9 +127,11 @@ public class Analyser {
                 }
             });
             thread.start();
+*/
 
 
         }
+        startBS();
     }
 
     public ArrayList<String> findPidsForComp() {
@@ -143,6 +153,16 @@ public class Analyser {
             if(isInteger(str))  res.add(str);
         this.pids = res;
         return res;
+    }
+
+    public void startBS() {
+        SiebelBSExec bs = new SiebelBSExec(S_IP, S_PORT, S_ENTERPRISE, S_OBJMGR, S_USER_NAME, S_PASSWORD, S_LOCALE, S_BS, this.st);
+        Map<String, String> input = new HashMap<>();
+        input.put("iterations", "1000");
+        input.put("count", "16");
+        bs.setInputs(input);
+        Thread bsT = new Thread(bs);
+        bsT.start();
     }
 
     private boolean isInteger(String s) {
