@@ -1,9 +1,5 @@
 package com.company;
 
-import com.siebel.data.SiebelDataBean;
-import com.siebel.data.SiebelException;
-import com.siebel.data.SiebelPropertySet;
-import com.siebel.data.SiebelService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -27,12 +23,12 @@ public class Analyser {
     private static final String S_BS="TSC Dev Nightmare";
 
     private static String P_COUNT = "100"; // Время анализа: P_COUNT*0,1
-    public boolean wait = false;
 
     private JSONObject jobj = new JSONObject();
     private ArrayList<String> pids = null;
 
-    private States st = null;
+    private Map<String, Boolean> runs = new HashMap<>();
+    private States st;
 
     public Analyser(States st) {
         this.st = st;
@@ -49,7 +45,10 @@ public class Analyser {
             P_COUNT = iterations;
         if(this.pids == null)
             this.pids = findPidsForComp();
-        for(String str: this.pids) this.jobj.put(str, new JSONObject());
+        for(String str: this.pids) {
+            this.jobj.put(str, new JSONObject());
+            this.runs.put(str, true);
+        }
         try {
             startAnalyse();
         }
@@ -98,38 +97,15 @@ public class Analyser {
                 }
                 this.jobj.getJSONObject(str).put("cpu_before", cpu);
                 this.jobj.getJSONObject(str).put("memory_before", memory);
-                this.st.setAnalyseFinished(true);
-                System.out.print("\n Процесс завершен\n>");
+                this.runs.put(str, false);
+                if(this.allFinished()) {
+                    this.st.setAnalyseFinished(true);
+                    System.out.print("\nПроцесс завершен\nНажмите Enter");
+                }
 
                 instance.close();
             });
             t.start();
-
-
-            /*Thread thread = new Thread(() -> {
-                try {
-                    SiebelDataBean sblConnect = new SiebelDataBean();
-                    sblConnect.login("Siebel://"+S_IP+":"+S_PORT+"/"+S_ENTERPRISE+"/"+S_OBJMGR, S_USER_NAME, S_PASSWORD, S_LOCALE);
-                    Thread.sleep(2000);
-                    SiebelService BS = sblConnect.getService(S_BS);
-                    SiebelPropertySet Inputs1 = sblConnect.newPropertySet();
-                    Inputs1.setProperty("iterations", "1000");
-                    Inputs1.setProperty("count", "16");
-                    SiebelPropertySet Outputs1 = sblConnect.newPropertySet();
-                    BS.invokeMethod("resetVariables", Inputs1, Outputs1);
-                    // println 'Result: ' + Outputs1.getProperty("result");
-
-                    sblConnect.logoff();
-
-                }
-                catch (SiebelException | InterruptedException e){
-                    System.err.println(e.getMessage());
-                }
-            });
-            thread.start();
-*/
-
-
         }
         startBS();
     }
@@ -163,6 +139,14 @@ public class Analyser {
         bs.setInputs(input);
         Thread bsT = new Thread(bs);
         bsT.start();
+    }
+
+    private boolean allFinished() {
+        for(Map.Entry<String, Boolean> it: this.runs.entrySet()) {
+            if (it.getValue()) return false;
+        }
+        return true;
+
     }
 
     private boolean isInteger(String s) {
