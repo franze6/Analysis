@@ -61,7 +61,8 @@ public class StatPid {
     }
 
     public void stop() {
-        this.instance.doStop();
+        //this.instance.doStop();
+        System.out.println(this.instance.getOutBuff().toString());
     }
 
     class State {

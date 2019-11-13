@@ -60,7 +60,7 @@ public class Main {
                         String[] arg = command.split(" ");
                         if(arg.length > 1) {
                             String jsonStr = in.nextLine();
-                            if(jsonStr != null)
+                            if(!jsonStr.isEmpty())
                                 analyser.setBSConfig(jsonStr);
                             analyser.start(arg[1], true);
                         }
@@ -105,7 +105,7 @@ public class Main {
 
                     );
                 }
-                //else if (command.equals("stop")) analyser.stopAnalyse();
+                else if (command.equals("stop")) analyser.stopAnalyse();
                 Thread.sleep(100);
             }
         } catch (InterruptedException e) {

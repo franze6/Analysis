@@ -32,7 +32,7 @@ public class SiebelBSExec implements Runnable  {
             sblConnect.login("Siebel://" + connectionData.getIp() + ":" + connectionData.getPort() + "/" + connectionData.getEnterprise()
                             + "/" + connectionData.getObjmgr(),
                     connectionData.getUserName(), connectionData.getPassword(), connectionData.getLocale());
-            Thread.sleep(500);
+            Thread.sleep(50);
             System.out.println("Start BS...");
             SiebelService BS = sblConnect.getService(this.bs.getName());
             SiebelPropertySet Inputs1 = sblConnect.newPropertySet();

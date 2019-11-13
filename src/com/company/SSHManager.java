@@ -138,13 +138,8 @@ public class SSHManager
             while (true) {
                 for (int c; ((c = in.read()) >= 0);) {
                     this.outBuff.append((char) c);
-                    if (this.keepStoping()) {
-                        break;
-                    }
+                    System.out.print((char)c);
                 }
-
-                if(this.keepStoping()) break;
-
 
                 if (channel.isClosed()) {
                     if (in.available() > 0) continue;
@@ -152,6 +147,7 @@ public class SSHManager
                     break;
                 }
             }
+            this.stop = true;
             return true;
         }
         catch (IOException | JSchException ioEx) {
