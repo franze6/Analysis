@@ -2,21 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="51263e86-daff-41ab-b2cb-f205e0d429d8" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/com/company/AnalysisProc.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/SiebelConnectionData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/com/company/SshConnectionData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StatPid.iml" beforeDir="false" afterPath="$PROJECT_DIR$/StatPid.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/artifacts/StatPid_jar/StatPid_jar.jar" beforeDir="false" afterPath="$PROJECT_DIR$/out/artifacts/StatPid_jar/StatPid_jar.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/Analyser.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/Analyser.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/SSHManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/SSHManager.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/StatPid$State.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/StatPid$State.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/StatPid.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/StatPid.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Analyser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Analyser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/SSHManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/SSHManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/SiebelBSExec.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/SiebelBSExec.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/StatPid.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/StatPid.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -163,6 +154,11 @@
           <url>file://$PROJECT_DIR$/src/com/company/StatPid.java</url>
           <line>63</line>
           <option name="timeStamp" value="45" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/com/company/Analyser.java</url>
+          <line>199</line>
+          <option name="timeStamp" value="49" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

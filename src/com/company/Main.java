@@ -58,8 +58,12 @@ public class Main {
                 }else if (command.contains("start")) {
                     if(st.isAnalyseFinished()) {
                         String[] arg = command.split(" ");
-                        if(arg.length > 1)
+                        if(arg.length > 1) {
+                            String jsonStr = in.nextLine();
+                            if(jsonStr != null)
+                                analyser.setBSConfig(jsonStr);
                             analyser.start(arg[1], true);
+                        }
                         else System.out.println("Не верный синтаксис");
                     }
                     else {

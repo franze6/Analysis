@@ -181,6 +181,28 @@ public class Analyser {
         }
     }
 
+    public void setBSConfig(String str) {
+        try {
+            JSONParser jsonParser = new JSONParser();
+            Object obj = jsonParser.parse(str);
+            JSONObject bsConfig = (JSONObject) obj;
+            Map<String, Map<String, String>> methods = new HashMap<>();
+            for(Object it:bsConfig.keySet()) {
+                if(it.toString().equals("name")) continue;
+                JSONObject method = (JSONObject)bsConfig.get(it);
+                JSONObject inputs = (JSONObject) method.get("inputs");
+                Map<String, String> inputsMap = new HashMap<>();
+                for (Object it2 : inputs.keySet()) {
+                    inputsMap.put(it2.toString(), inputs.get(it2).toString());
+                }
+                methods.put(it.toString(), inputsMap);
+            }
+            this.bs = new SiebelBSExec.BS(bsConfig.get("name").toString(), methods);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void setFreq(float freq) {
         this.freq = freq;
     }
