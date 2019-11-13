@@ -10,7 +10,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/com.jcraft.jsch_0.1.27.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/com.jcraft.jsch_0.1.27.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -19,7 +19,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/siebel-1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/json-simple-1.1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -28,7 +28,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/siebelji_rus-1.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/siebel-1.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -37,7 +37,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/json-20190722.jar!/" />
+          <root url="jar://$MODULE_DIR$/lib/siebelji_rus-1.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

@@ -1,27 +1,12 @@
 package com.company;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import org.json.simple.*;
+import org.json.simple.parser.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 public class Analyser {
-    private static final String SSH_USER_NAME="siebel";
-    private static final String SSH_PASSWORD="siebel";
-    private static final String SSH_IP="bcvm496";
-
-    private static final String S_USER_NAME="SADMIN";
-    private static final String S_PASSWORD="SADMIN";
-    private static final String S_IP="bcvm496";
-    private static final String S_PORT="2321";
-    private static final String S_OBJMGR="FINSObjMgr_rus";
-    private static final String S_ENTERPRISE="SBA_81";
-    private static final String S_LOCALE="rus";
-    private static final String S_SERVER="bcvm496";
-    private static final String S_BS="TSC Dev Nightmare";
-
     private static String P_COUNT = "100"; // Время анализа: P_COUNT*0,1
 
     private JSONObject jobj = new JSONObject();
@@ -29,16 +14,23 @@ public class Analyser {
 
     private Map<String, Boolean> runs = new HashMap<>();
     private States st;
+    private SiebelConnectionData siebelConnectionData;
+    private SshConnectionData sshConnectionData;
+    private SiebelBSExec.BS bs;
+    private float freq;
 
-    public Analyser(States st) {
+    ArrayList<AnalysisProc> threads = new ArrayList<>();
+
+    public Analyser(States st, float freq) {
         this.st = st;
+        this.freq = freq;
     }
 
     public JSONObject getJobj() {
         return jobj;
     }
 
-    public void start(String iterations) {
+    public void start(String iterations, boolean withBS) {
 
         this.st.setAnalyseFinished(false);
         if(!iterations.isEmpty())
@@ -50,7 +42,7 @@ public class Analyser {
             this.runs.put(str, true);
         }
         try {
-            startAnalyse();
+            startAnalyse(withBS);
         }
         catch (Exception e){
             System.err.println(e.getMessage());
@@ -58,7 +50,8 @@ public class Analyser {
     }
 
     public void killSission(String pid) {
-        SSHManager instance = new SSHManager(SSH_USER_NAME, SSH_PASSWORD, SSH_IP, "");
+        SSHManager instance = new SSHManager(this.sshConnectionData.getUserName(),
+                this.sshConnectionData.getPassword(), this.sshConnectionData.getIp(), "");
         String errorMessage = instance.connect();
         if(errorMessage != null)
         {
@@ -70,48 +63,34 @@ public class Analyser {
         instance.sendCommand(command);
         instance.close();
     }
-    private void startAnalyse() {
+    private void startAnalyse(boolean withBS) {
 
         for(String str: this.pids) {
-            Thread t = new Thread(() -> {
-                SSHManager instance = new SSHManager(SSH_USER_NAME, SSH_PASSWORD, SSH_IP, "");
-                String errorMessage = instance.connect();
-
-                if(errorMessage != null)
-                {
-                    System.err.println(errorMessage);
-                    return;
-                }
-                StatPid stat = new StatPid(str);
-                ArrayList<StatPid.State> st = stat.start(0.1f, P_COUNT, instance);
-
-                JSONArray cpu = new JSONArray();
-                JSONArray memory = new JSONArray();
-
-
-
-                for(StatPid.State s: st) {
-                    cpu.put(s.cpu);
-                    memory.put(s.memory);
-
-                }
-                this.jobj.getJSONObject(str).put("cpu_before", cpu);
-                this.jobj.getJSONObject(str).put("memory_before", memory);
-                this.runs.put(str, false);
-                if(this.allFinished()) {
-                    this.st.setAnalyseFinished(true);
-                    System.out.print("\nПроцесс завершен\nНажмите Enter");
-                }
-
-                instance.close();
-            });
+            AnalysisProc t = new AnalysisProc(this.sshConnectionData, str, (JSONObject)this.jobj.get(str), this.freq, P_COUNT);
+            this.threads.add(t);
             t.start();
         }
-        startBS();
+        if(withBS) startBS((String) this.bs.getMethods().keySet().toArray()[0]);
+        new Thread(()-> {
+           while(!this.st.isAnalyseFinished()) {
+               if(allFinished()) {
+                   this.st.setAnalyseFinished(true);
+                   System.out.println("Процесс завершен\nНажмите Enter...");
+               }
+           }
+        }).start();
     }
 
+    public void stopAnalyse() {
+        for(AnalysisProc t:this.threads)
+            t.stopT();
+    }
+
+
+
     public ArrayList<String> findPidsForComp() {
-        SSHManager instance = new SSHManager(SSH_USER_NAME, SSH_PASSWORD, SSH_IP, "");
+        SSHManager instance = new SSHManager(this.sshConnectionData.getUserName(),
+                this.sshConnectionData.getPassword(), this.sshConnectionData.getIp(), "");
         String errorMessage = instance.connect();
         if(errorMessage != null)
         {
@@ -119,10 +98,14 @@ public class Analyser {
             return null;
         }
         ArrayList<String> res = new ArrayList<>();
-        String command = ". /u01/app/Siebel/siebsrvr/siebenv.sh\nsrvrmgr /g "+S_IP+" /e "+S_ENTERPRISE+" /u "+S_USER_NAME+" /p "+S_PASSWORD+" /s "+S_SERVER+" /c 'list procs for comp "+S_OBJMGR+" show CC_ALIAS, TK_PID' | grep "+S_OBJMGR+" | awk '{print $2}'\nexit\n";
+        String command = ". /u01/app/Siebel/siebsrvr/siebenv.sh\nsrvrmgr /g "+this.siebelConnectionData.getIp()+
+                " /e "+this.siebelConnectionData.getEnterprise()+" /u "+this.siebelConnectionData.getUserName()+
+                " /p "+this.siebelConnectionData.getPassword()+" /s "+this.siebelConnectionData.getServer()+
+                " /c 'list procs for comp "+this.siebelConnectionData.getObjmgr()+" show CC_ALIAS, TK_PID' | grep "+
+                this.siebelConnectionData.getObjmgr()+" | awk '{print $2}'\nexit\n";
 
-
-        String result = instance.sendCommand(command);
+        instance.sendCommand(command);
+        String result = instance.getOutBuff().toString();
         instance.close();
 
         for(String str: result.replaceAll("\r+","").split("\n"))
@@ -131,22 +114,75 @@ public class Analyser {
         return res;
     }
 
-    public void startBS() {
-        SiebelBSExec bs = new SiebelBSExec(S_IP, S_PORT, S_ENTERPRISE, S_OBJMGR, S_USER_NAME, S_PASSWORD, S_LOCALE, S_BS, this.st);
-        Map<String, String> input = new HashMap<>();
-        input.put("iterations", "1000");
-        input.put("count", "16");
-        bs.setInputs(input);
-        Thread bsT = new Thread(bs);
+    public void startBS(String method) {
+        if(!this.bs.getMethods().containsKey(method)) {
+            System.out.println("Метод не существует!");
+            return;
+        }
+        SiebelBSExec bsExec = new SiebelBSExec(this.siebelConnectionData, this.bs, method,this.st);
+        Thread bsT = new Thread(bsExec);
         bsT.start();
     }
 
     private boolean allFinished() {
-        for(Map.Entry<String, Boolean> it: this.runs.entrySet()) {
-            if (it.getValue()) return false;
+        try {
+            for (AnalysisProc it : this.threads) {
+                Thread.sleep(10);
+                if (it.isRun()) return false;
+            }
+            return true;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return true;
         }
-        return true;
+    }
 
+    public void setConfig(String file) {
+        JSONParser jsonParser = new JSONParser();
+
+        try (FileReader reader = new FileReader(file))
+        {
+            //Read JSON file
+            Object obj = jsonParser.parse(reader);
+
+            JSONObject configList = (JSONObject) obj;
+            JSONObject connection = (JSONObject) configList.get("connection");
+            JSONObject sshConnection = (JSONObject) connection.get("ssh");
+            JSONObject siebelConnection = (JSONObject) connection.get("siebel");
+            this.siebelConnectionData = new SiebelConnectionData(siebelConnection.get("ip").toString(),
+                    siebelConnection.get("port").toString(),
+                    siebelConnection.get("enterprise").toString(),
+                    siebelConnection.get("objmgr").toString(),
+                    siebelConnection.get("user").toString(),
+                    siebelConnection.get("server").toString(),
+                    siebelConnection.get("password").toString(),
+                    siebelConnection.get("locale").toString());
+            this.sshConnectionData = new SshConnectionData(sshConnection.get("ip").toString(),
+                    sshConnection.get("port").toString(),
+                    sshConnection.get("user").toString(),
+                    sshConnection.get("password").toString());
+
+            JSONObject bsConfig = (JSONObject) configList.get("BS");
+            JSONArray mList = (JSONArray) bsConfig.get("methods");
+            Map<String, Map<String, String>> methods = new HashMap<>();
+            mList.forEach( method -> {
+                JSONObject mObj = (JSONObject) bsConfig.get(method.toString());
+                JSONObject inputs = (JSONObject) mObj.get("inputs");
+
+                Map<String, String> inputsMap = new HashMap<>();
+                for (Object it:inputs.keySet()) {
+                    inputsMap.put(it.toString(), inputs.get(it).toString());
+                }
+                methods.put(method.toString(), inputsMap);
+            });
+            this.bs = new SiebelBSExec.BS(bsConfig.get("name").toString(), methods);
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setFreq(float freq) {
+        this.freq = freq;
     }
 
     private boolean isInteger(String s) {

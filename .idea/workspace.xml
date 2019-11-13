@@ -2,11 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="51263e86-daff-41ab-b2cb-f205e0d429d8" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/com/company/AnalysisProc.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/company/SiebelConnectionData.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/com/company/SshConnectionData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StatPid.iml" beforeDir="false" afterPath="$PROJECT_DIR$/StatPid.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/Analyser.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/Analyser.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/SSHManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/SSHManager.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/StatPid$State.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/StatPid$State.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/StatPid/com/company/StatPid.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/StatPid/com/company/StatPid.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Analyser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Analyser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/company/SSHManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/SSHManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/company/SiebelBSExec.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/SiebelBSExec.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/company/StatPid.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/StatPid.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -30,8 +40,8 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.SHOW" value="true" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/src/com/company" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/jcommon-1.0.23.jar!/" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/lib/siebelji_rus-1.0.jar!/" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="project.propGUI" />
@@ -116,7 +126,14 @@
       <option name="project" value="LOCAL" />
       <updated>1573466748672</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="fix console output">
+      <created>1573472528869</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1573472528869</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -136,15 +153,16 @@
     <MESSAGE value="command line added" />
     <MESSAGE value="help added" />
     <MESSAGE value="startBS command added" />
-    <option name="LAST_COMMIT_MESSAGE" value="startBS command added" />
+    <MESSAGE value="fix console output" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix console output" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/com/company/StatPid.java</url>
-          <line>21</line>
-          <option name="timeStamp" value="12" />
+          <line>63</line>
+          <option name="timeStamp" value="45" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -24,6 +24,8 @@ public class SSHManager
     private String strPassword;
     private Session sesConnection;
     private int intTimeOut;
+    StringBuilder outBuff;
+    private boolean stop = false;
 
     private void doCommonConstructorActions(String userName,
                                             String password, String connectionIP, String knownHostsFileName)
@@ -95,6 +97,10 @@ public class SSHManager
         return errorMessage;
     }
 
+    public StringBuilder getOutBuff() {
+        return outBuff;
+    }
+
     private String logError(String errorMessage)
     {
         if(errorMessage != null)
@@ -117,21 +123,28 @@ public class SSHManager
         return warnMessage;
     }
 
-    public String sendCommand(String command)
+    public boolean sendCommand(String command)
     {
+        this.stop = false;
         try {
             Channel channel = sesConnection.openChannel("shell");
             channel.setInputStream(new ByteArrayInputStream(command.getBytes(StandardCharsets.UTF_8)));
             channel.setOutputStream(System.out);
             InputStream in = channel.getInputStream();
-            StringBuilder outBuff = new StringBuilder();
+            this.outBuff = new StringBuilder();
 
             channel.connect();
 
             while (true) {
                 for (int c; ((c = in.read()) >= 0);) {
-                    outBuff.append((char) c);
+                    this.outBuff.append((char) c);
+                    if (this.keepStoping()) {
+                        break;
+                    }
                 }
+
+                if(this.keepStoping()) break;
+
 
                 if (channel.isClosed()) {
                     if (in.available() > 0) continue;
@@ -139,13 +152,21 @@ public class SSHManager
                     break;
                 }
             }
-            return outBuff.toString();
+            return true;
         }
         catch (IOException | JSchException ioEx) {
             System.err.println(ioEx.toString());
-            return "";
+            return false;
         }
     }
+
+    public void doStop() {
+        this.stop = true;
+    }
+
+    public boolean keepStoping() { return this.stop; }
+
+
 
     public void close()
     {

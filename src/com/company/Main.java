@@ -1,6 +1,5 @@
 package com.company;
 
-import org.json.JSONException;
 
 import java.awt.*;
 import java.io.BufferedWriter;
@@ -12,14 +11,16 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
+        File config = new File("config\\config.json");
+        float freq =0.1f;
 
         States st  = new States();
-
-        Analyser analyser = new Analyser(st);
+        Analyser analyser = new Analyser(st, freq);
+        if(config.exists()) {
+            analyser.setConfig(config.getAbsolutePath());
+        }
         Scanner in = new Scanner(System.in);
         try {
-
-
             while (true) {
                 if (!st.isBsFinished()) {
                     Thread.sleep(1000);
@@ -33,13 +34,32 @@ public class Main {
                 if (command.equals("getpids")) {
                     for (String str : analyser.findPidsForComp())
                         System.out.println(str);
-                } else if (command.equals("startBS")) {
-                    analyser.startBS();
+                } else if (command.contains("setfreq")) {
+                    String[] arg = command.split(" ");
+                    if(arg.length > 1) {
+                        freq = Float.parseFloat(arg[1]);
+                        analyser.setFreq(freq);
+                    }
+                    else System.out.println("Не верный синтаксис");
+                }else if (command.contains("startBS")) {
+                    String[] arg = command.split(" ");
+                    if(arg.length > 1)
+                        analyser.startBS(arg[1]);
+                    else System.out.println("Не верный синтаксис");
+                }else if (command.contains("startUI")) {
+                    if (st.isAnalyseFinished()) {
+                        String[] arg = command.split(" ");
+                        if (arg.length > 1)
+                            analyser.start(arg[1], false);
+                        else System.out.println("Не верный синтаксис");
+                    } else {
+                        System.out.println("Старый процесс еще не завершен, подожди немного");
+                    }
                 }else if (command.contains("start")) {
                     if(st.isAnalyseFinished()) {
                         String[] arg = command.split(" ");
                         if(arg.length > 1)
-                            analyser.start(arg[1]);
+                            analyser.start(arg[1], true);
                         else System.out.println("Не верный синтаксис");
                     }
                     else {
@@ -53,7 +73,7 @@ public class Main {
                     if(arg.length > 1) {
                         if(arg[1].equals("all")) {
                             for (String str : analyser.findPidsForComp()) {
-                                if (!analyser.getJobj().has(str)) {
+                                if (!analyser.getJobj().containsKey(str)) {
                                     System.out.println("Нет такой инфы");
                                 } else {
                                     openChart(str, analyser);
@@ -61,7 +81,7 @@ public class Main {
                             }
                         }
                         else {
-                            if (!analyser.getJobj().has(arg[1])) {
+                            if (!analyser.getJobj().containsKey(arg[1])) {
                                 System.out.println("Нет такой инфы");
                             } else {
                                 openChart(arg[1], analyser);
@@ -81,9 +101,10 @@ public class Main {
 
                     );
                 }
+                //else if (command.equals("stop")) analyser.stopAnalyse();
                 Thread.sleep(100);
             }
-        } catch (InterruptedException | JSONException e) {
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -92,58 +113,68 @@ public class Main {
         //analyser.start();
     }
 
+    public void setConfig(File file) {
+
+    }
+
+    public void createDefaultConfig(File file) {
+
+    }
+
     public static void openChart(String str, Analyser analyser) {
         try {
             File file = File.createTempFile("tmp", ".html");
             BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            String pattern = "<html>\n" +
-                    "<head>\n" +
+            String pattern = "<html class=\"wf-roboto-n4-active wf-roboto-n5-active wf-active\"><head>\n" +
                     "  <script type=\"text/javascript\" src=\"https://www.gstatic.com/charts/loader.js\"></script>\n" +
-                    "    <script type=\"text/javascript\">\n" +
-                    "      google.charts.load('current', {'packages':['line']});\n" +
+                    "  <script type=\"text/javascript\" charset=\"utf-8\">\n" +
+                    "          google.charts.load('current', {\n" +
+                    "        'packages': ['corechart']\n" +
+                    "      });\n" +
                     "      google.charts.setOnLoadCallback(drawChart);\n" +
                     "\n" +
-                    "    function drawChart() {\n" +
+                    "      function drawChart() {\n" +
                     "\n" +
-                    "        var jsn = '" + analyser.getJobj().getJSONObject(str).toString() +
-                    "';var obj = JSON.parse(jsn);\n" +
+                    "        var jsn = '"+ analyser.getJobj().get(str).toString() +"';\n" +
+                    "      var obj = JSON.parse(jsn);\n" +
                     "\n" +
                     "      var data = new google.visualization.DataTable();\n" +
                     "      data.addColumn('number', \"Выборка\");\n" +
                     "      data.addColumn('number', 'Память после запуска');\n" +
                     "\n" +
                     "      var dataSet = [];\n" +
+                    "        \n" +
                     "\n" +
-                    "      for( i = 0; i< obj.memory_before.length; i ++)\n" +
-                    "      {\n" +
-                    "        dataSet[i] = [i, parseFloat(obj.memory_before[i])];\n" +
-                    "      }\n" +
-                    "\n" +
-                    "\n" +
-                    "      data.addRows(dataSet);\n" +
-                    "\n" +
-                    "      var options = {\n" +
-                    "        chart: {\n" +
-                    "          title: \"Процесс\",\n" +
-                    "          subtitle: obj.pid\n" +
-                    "        },\n" +
-                    "        width: 1000,\n" +
-                    "        height: 500,\n" +
-                    "        axes: {\n" +
-                    "          x: {\n" +
-                    "            0: {side: 'top'}\n" +
-                    "          }\n" +
+                    "        for( i = 0; i< obj.memory_before.length; i ++)\n" +
+                    "        {\n" +
+                    "          dataSet[i] = [i, parseFloat(obj.memory_before[i])];\n" +
                     "        }\n" +
-                    "      };\n" +
+                    "        data.addRows(dataSet);\n" +
                     "\n" +
-                    "      var chart = new google.charts.Line(document.getElementById('line_top_x'));\n" +
+                    "        var options = {\n" +
+                    "          title: \"Процесс\",\n" +
+                    "          subtitle: obj.pid,\n" +
+                    "          hAxis: {\n" +
+                    "            title: 'Выборка',\n" +
+                    "            titleTextStyle: {\n" +
+                    "              color: '#333'\n" +
+                    "            },\n" +
+                    "            slantedText: true,\n" +
+                    "            slantedTextAngle: 180\n" +
+                    "          },\n" +
+                    "          explorer: {\n" +
+                    "            axis: 'horizontal',\n" +
+                    "            keepInBounds: true,\n" +
+                    "            maxZoomIn: 160.0\n" +
+                    "          },\n" +
+                    "        };\n" +
                     "\n" +
-                    "      chart.draw(data, google.charts.Line.convertOptions(options));\n" +
-                    "    }\n" +
+                    "        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));\n" +
+                    "        chart.draw(data, options);\n" +
+                    "      }\n" +
                     "  </script>\n" +
-                    "</head>\n" +
                     "<body>\n" +
-                    "  <div id=\"line_top_x\"></div>\n" +
+                    "<div id=\"chart_div\" style=\"width: 1000px; height: 800px;\"></div>\n" +
                     "</body>\n" +
                     "</html>";
             writer.write(pattern);
