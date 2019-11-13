@@ -39,7 +39,7 @@ public class SiebelBSExec implements Runnable  {
             for(Map.Entry<String, String> it: this.inputs.entrySet())
                 Inputs1.setProperty(it.getKey(), it.getValue());
             SiebelPropertySet Outputs1 = sblConnect.newPropertySet();
-            BS.invokeMethod("resetVariables2", Inputs1, Outputs1);
+            BS.invokeMethod(this.method, Inputs1, Outputs1);
 
             sblConnect.logoff();
             this.st.setBsFinished(true);
